@@ -1,4 +1,4 @@
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/hooks/useAuth";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -13,6 +13,7 @@ import Settings from "@/pages/Settings";
 import Notifications from "@/pages/Notifications";
 import LandingPage from "@/pages/LandingPage";
 import Auth from "@/pages/Auth";
+import SetupWizard from "@/components/onboarding/SetupWizard";  // 👈 new import
 import NotFound from "@/pages/NotFound";
 import RoomDetails from "@/pages/RoomDetails";
 import HelpCenter from "@/pages/HelpCenter";
@@ -44,6 +45,11 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
     return <Auth />;
   }
 
+  // 👇 Example: check if onboarding is done (you’ll need to track this in your user profile)
+  if (user && !user.onboardingComplete) {
+    return <Navigate to="/onboarding" replace />;
+  }
+
   return <>{children}</>;
 }
 
@@ -51,6 +57,14 @@ const router = createBrowserRouter([
   {
     path: "/auth",
     element: <Auth />
+  },
+  {
+    path: "/onboarding",
+    element: (
+      <ProtectedRoute>
+        <Onboarding />
+      </ProtectedRoute>
+    )
   },
   {
     path: "/",
@@ -64,54 +78,18 @@ const router = createBrowserRouter([
         index: true,
         element: <Dashboard />
       },
-      {
-        path: "automation",
-        element: <Automation />
-      },
-      {
-        path: "energy",
-        element: <Energy />
-      },
-      {
-        path: "safety",
-        element: <Safety />
-      },
-      {
-        path: "settings",
-        element: <Settings />
-      },
-      {
-        path: "notifications",
-        element: <Notifications />
-      },
-      {
-        path: "room/:roomId",
-        element: <RoomDetails />
-      },
-      {
-        path: "help",
-        element: <HelpCenter />
-      },
-      {
-        path: "faq",
-        element: <FAQ />
-      },
-      {
-        path: "contact",
-        element: <ContactSupport />
-      },
-      {
-        path: "feedback",
-        element: <Feedback />
-      },
-      {
-        path: "privacy",
-        element: <PrivacyPolicy />
-      },
-      {
-        path: "ander",
-        element: <Ander />
-      }
+      { path: "automation", element: <Automation /> },
+      { path: "energy", element: <Energy /> },
+      { path: "safety", element: <Safety /> },
+      { path: "settings", element: <Settings /> },
+      { path: "notifications", element: <Notifications /> },
+      { path: "room/:roomId", element: <RoomDetails /> },
+      { path: "help", element: <HelpCenter /> },
+      { path: "faq", element: <FAQ /> },
+      { path: "contact", element: <ContactSupport /> },
+      { path: "feedback", element: <Feedback /> },
+      { path: "privacy", element: <PrivacyPolicy /> },
+      { path: "ander", element: <Ander /> }
     ]
   },
   {
